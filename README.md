@@ -37,6 +37,10 @@ Durante o desenvolvimento, foram praticados conceitos como:
 - Perfis e preferências persistentes de usuários.
 - Página individual para cada artista.
 - Fila de reprodução e histórico de faixas ouvidas.
+- Recomendações personalizadas com base em favoritos, histórico e climas musicais mais ouvidos.
+- Playlists colaborativas com compartilhamento controlado e permissões para adicionar ou reorganizar faixas.
+- Experiência PWA com modo offline para catálogo e playlists, respeitando os direitos de distribuição de cada áudio.
+- Transições inteligentes entre faixas, incluindo crossfade, normalização de volume e reordenação da fila de reprodução.
 
 ## Tecnologias utilizadas
 
