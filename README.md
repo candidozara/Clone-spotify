@@ -1,10 +1,10 @@
 # SoundWave — Plataforma de Streaming Musical
 
-Uma plataforma autoral de música criada como projeto de estudo e portfólio, explorando experiências modernas de descoberta e reprodução de áudio na web.
+Uma plataforma autoral de música criada como projeto da pós em IA APLICADA da UNIPDS e portfólio, explorando experiências modernas de descoberta e reprodução de áudio na web.
 
 ## Sobre o projeto
 
-O SoundWave é um projeto acadêmico e de portfólio inspirado em padrões de experiência de plataformas de streaming, como descoberta de faixas, busca, catálogos e reprodução contínua. Ele foi desenvolvido para praticar a criação de uma aplicação web musical completa, com interface responsiva e dados persistentes na nuvem.
+O SoundWave inclui procura e descoberta de faixas, busca, catálogos e reprodução contínua..
 
 Durante o desenvolvimento, foram praticados conceitos como:
 
