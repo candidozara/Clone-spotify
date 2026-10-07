@@ -61,7 +61,9 @@ Sem a API, o frontend abre com metadados de demonstração. Para reproduzir loca
 
 O Cloudflare Pages Free aceita até 20.000 arquivos por site e até 25 MiB por arquivo estático. Para este projeto, os 10 MP3s totalizam cerca de 35 MB e cada arquivo fica abaixo desse limite.
 
-## Direitos e créditos
+## Direitos, créditos e licença de uso
+
+O código e a documentação deste projeto estão sob a [Licença de Portfólio SoundWave](./LICENSE.md), atribuída a **Alessandro Candido ([@candidozara](https://github.com/candidozara))**. A licença permite visualizar e avaliar o projeto, mas proíbe republicá-lo, distribuí-lo, fazer deploy de cópias ou apresentá-lo como obra própria sem autorização expressa.
 
 - Não use marca, interface, catálogo, músicas ou arquivos do Spotify.
 - Use somente conteúdo próprio ou licenciado para redistribuição.

@@ -19,4 +19,4 @@ As faixas de demonstração foram baixadas pelo proprietário do projeto no Pixa
 
 1. Registrar a URL da página de cada faixa e revisar seus termos no Pixabay.
 2. Manter este arquivo atualizado com eventuais requisitos de atribuição.
-3. Enviar somente arquivos autorizados para o bucket Cloudflare R2; os arquivos de áudio não devem ser versionados neste repositório.
+3. Publicar somente arquivos autorizados no Cloudflare Pages; os arquivos de áudio não devem ser versionados neste repositório.
