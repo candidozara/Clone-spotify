@@ -1,6 +1,14 @@
 # SoundWave
 
-Catálogo musical demonstrativo e autoral, criado sem código, marca, imagens ou músicas do Spotify. O frontend usa React + Vite; a API é um Cloudflare Worker e os metadados são persistidos no Cloudflare D1 (SQLite).
+Aplicação de portfólio autoral para catálogo e reprodução de música. O frontend usa React + Vite; a API é um Cloudflare Worker; e os metadados ficam no Cloudflare D1 (SQLite). As faixas de demonstração são de contribuidores do Pixabay Music e seus créditos estão em [CREDITS.md](./CREDITS.md).
+
+## Arquitetura
+
+- **Cloudflare Pages:** frontend e até 10 MP3s estáticos.
+- **Cloudflare Worker:** `GET /api/catalog`.
+- **Cloudflare D1:** contribuidores, faixas e caminhos de áudio.
+
+Os MP3s ficam em `public/audio/` apenas na cópia local usada para o deploy. Essa pasta é ignorada pelo Git e nunca deve ser enviada ao repositório.
 
 ## Execução local
 
@@ -10,25 +18,52 @@ npm run dev
 npm run build
 ```
 
-Sem a API, o frontend abre com dados de demonstração para desenvolvimento visual.
+Sem a API, o frontend abre com metadados de demonstração. Para reproduzir localmente, coloque os arquivos licenciados em `public/audio/` usando os nomes registrados no seed.
 
 ## Provisionar banco e API
 
-1. Instale/autentique o Wrangler com sua conta Cloudflare: `npx wrangler login`.
-2. Crie o banco: `npx wrangler d1 create soundwave-catalog`.
-3. Copie o `database_id` retornado para `wrangler.toml`.
-4. Aplique o esquema e dados:
+1. Autentique o Wrangler na conta Cloudflare:
+   ```bash
+   npx wrangler login
+   ```
+2. Crie o banco e copie o `database_id` retornado para `wrangler.toml`:
+   ```bash
+   npx wrangler d1 create soundwave-catalog
+   ```
+3. Em uma instalação nova, aplique schema e dados:
    ```bash
    npx wrangler d1 execute soundwave-catalog --remote --file=db/schema.sql
    npx wrangler d1 execute soundwave-catalog --remote --file=db/seed.sql
    ```
-5. Publique a API: `npm run api:deploy`.
-6. Defina a URL retornada como `VITE_API_BASE_URL` ao publicar o frontend.
+4. Em banco já existente sem `audio_path`, aplique a migração antes do seed:
+   ```bash
+   npx wrangler d1 execute soundwave-catalog --remote --file=db/migrations/001_add_audio_path.sql
+   npx wrangler d1 execute soundwave-catalog --remote --file=db/seed.sql
+   ```
+5. Registre seu subdomínio `workers.dev` no painel Cloudflare, se ainda não existir, e publique a API:
+   ```bash
+   npm run api:deploy
+   ```
 
-## Publicar frontend
+## Publicar no Cloudflare Pages sem R2
 
-O diretório de saída é `dist`. Publique-o como site estático no Cloudflare Pages, Render Static Site ou Vercel. Configure a variável `VITE_API_BASE_URL` com a URL do Worker e execute o build.
+1. Crie `.env.production` com a URL do Worker:
+   ```env
+   VITE_API_BASE_URL=https://SEU-WORKER.SEUSUBDOMINIO.workers.dev
+   ```
+2. Copie os MP3s permitidos para `public/audio/` e confirme que a pasta continua ignorada pelo Git.
+3. Gere e publique o build:
+   ```bash
+   npm run build
+   npx wrangler pages project create soundwave --production-branch=main
+   npx wrangler pages deploy dist --project-name=soundwave --branch=main
+   ```
 
-## Limites e direitos
+O Cloudflare Pages Free aceita até 20.000 arquivos por site e até 25 MiB por arquivo estático. Para este projeto, os 10 MP3s totalizam cerca de 35 MB e cada arquivo fica abaixo desse limite.
 
-O D1 no plano Workers Free oferece armazenamento persistente, sem cobrança por capacidade ociosa e com limites de uso diário. O projeto contém apenas dados fictícios. Para adicionar áudio ou imagens reais, use conteúdo próprio ou licenciado para redistribuição.
+## Direitos e créditos
+
+- Não use marca, interface, catálogo, músicas ou arquivos do Spotify.
+- Use somente conteúdo próprio ou licenciado para redistribuição.
+- Preserve título, contribuidor e origem de cada faixa no [CREDITS.md](./CREDITS.md).
+- Antes de qualquer uso público, confira os termos da página de origem de cada áudio.
