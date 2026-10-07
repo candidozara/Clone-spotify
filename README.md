@@ -1,71 +1,129 @@
-# SoundWave
+# SoundWave — Plataforma de Streaming Musical
 
-Aplicação de portfólio autoral para catálogo e reprodução de música. O frontend usa React + Vite; a API é um Cloudflare Worker; e os metadados ficam no Cloudflare D1 (SQLite). As faixas de demonstração são de contribuidores do Pixabay Music e seus créditos estão em [CREDITS.md](./CREDITS.md).
+Uma plataforma autoral de música criada como projeto de estudo e portfólio, explorando experiências modernas de descoberta e reprodução de áudio na web.
 
-## Arquitetura
+## Sobre o projeto
 
-- **Cloudflare Pages:** frontend e até 10 MP3s estáticos.
-- **Cloudflare Worker:** `GET /api/catalog`.
-- **Cloudflare D1:** contribuidores, faixas e caminhos de áudio.
+O SoundWave é um projeto acadêmico e de portfólio inspirado em padrões de experiência de plataformas de streaming, como descoberta de faixas, busca, catálogos e reprodução contínua. Ele foi desenvolvido para praticar a criação de uma aplicação web musical completa, com interface responsiva e dados persistentes na nuvem.
 
-Os MP3s ficam em `public/audio/` apenas na cópia local usada para o deploy. Essa pasta é ignorada pelo Git e nunca deve ser enviada ao repositório.
+Durante o desenvolvimento, foram praticados conceitos como:
 
-## Execução local
+- Manipulação de áudio no navegador com o elemento `audio`.
+- Consumo de API para carregar artistas e faixas.
+- Construção de uma interface responsiva para desktop e celular.
+- Busca, filtros por clima musical e descoberta por artista.
+- Gerenciamento de estado no React para player, favoritos e catálogo.
+- Deploy de frontend, API e banco de dados em serviços Cloudflare.
+
+> O SoundWave é um projeto independente e não possui vínculo, afiliação ou uso de marca, interface, músicas ou arquivos do Spotify.
+
+## Funcionalidades principais
+
+### Disponíveis
+
+- Player de música persistente com progresso, avanço, retrocesso e encerramento da reprodução.
+- Catálogo com 10 faixas de demonstração devidamente creditadas.
+- Busca por título ou artista.
+- Filtros de descoberta por clima: Energia, Calma, Cinemática, Festa e Noturna.
+- Galeria visual de artistas/contribuidores com espaços preparados para fotos autorizadas.
+- Atalho para visualizar as faixas de cada artista.
+- Favoritos locais durante a sessão de navegação.
+- Design responsivo para desktop e dispositivos móveis.
+- API pública para o catálogo musical com dados persistidos no Cloudflare D1.
+
+### Em evolução
+
+- Criação e salvamento de playlists personalizadas.
+- Perfis e preferências persistentes de usuários.
+- Página individual para cada artista.
+- Fila de reprodução e histórico de faixas ouvidas.
+
+## Tecnologias utilizadas
+
+| Camada | Tecnologias |
+|---|---|
+| Interface | [React](https://react.dev/), [Vite](https://vite.dev/), JavaScript, HTML e CSS |
+| API | [Cloudflare Workers](https://workers.cloudflare.com/) |
+| Banco de dados | [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite) |
+| Hospedagem | [Cloudflare Pages](https://pages.cloudflare.com/) |
+| Ferramentas | [Wrangler](https://developers.cloudflare.com/workers/wrangler/) e Git/GitHub |
+
+## Links úteis e referências
+
+- [Acessar o SoundWave publicado](https://soundwave-1au.pages.dev)
+- [Repositório no GitHub](https://github.com/candidozara/Clone-spotify)
+- [API pública do catálogo](https://soundwave-api.candidozara.workers.dev/api/catalog)
+- [Créditos das faixas de demonstração](./CREDITS.md)
+- [Licença de uso do projeto](./LICENSE.md)
+- [Adicionar referência visual no Figma](https://www.figma.com/) — substitua este link pelo protótipo do projeto quando ele existir.
+- [Documentação do React](https://react.dev/learn)
+- [Documentação do Cloudflare Workers](https://developers.cloudflare.com/workers/)
+
+## Como executar o projeto
+
+### Pré-requisitos
+
+- [Node.js](https://nodejs.org/) 18 ou superior.
+- [Git](https://git-scm.com/).
+
+### Instalação
+
+1. Clone o repositório:
+
+   ```bash
+   git clone https://github.com/candidozara/Clone-spotify.git
+   ```
+
+2. Entre na pasta do projeto:
+
+   ```bash
+   cd Clone-spotify
+   ```
+
+3. Instale as dependências:
+
+   ```bash
+   npm install
+   ```
+
+4. Inicie o ambiente de desenvolvimento:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Abra no navegador o endereço exibido pelo Vite — normalmente [http://localhost:5173](http://localhost:5173).
+
+### Build de produção
+
+Para gerar uma versão otimizada do frontend:
 
 ```bash
-npm install
-npm run dev
 npm run build
 ```
 
-Sem a API, o frontend abre com metadados de demonstração. Para reproduzir localmente, coloque os arquivos licenciados em `public/audio/` usando os nomes registrados no seed.
+Os arquivos de produção serão criados na pasta `dist/`.
 
-## Provisionar banco e API
+### Áudios de demonstração no ambiente local
 
-1. Autentique o Wrangler na conta Cloudflare:
-   ```bash
-   npx wrangler login
-   ```
-2. Crie o banco e copie o `database_id` retornado para `wrangler.toml`:
-   ```bash
-   npx wrangler d1 create soundwave-catalog
-   ```
-3. Em uma instalação nova, aplique schema e dados:
-   ```bash
-   npx wrangler d1 execute soundwave-catalog --remote --file=db/schema.sql
-   npx wrangler d1 execute soundwave-catalog --remote --file=db/seed.sql
-   ```
-4. Em banco já existente sem `audio_path`, aplique a migração antes do seed:
-   ```bash
-   npx wrangler d1 execute soundwave-catalog --remote --file=db/migrations/001_add_audio_path.sql
-   npx wrangler d1 execute soundwave-catalog --remote --file=db/seed.sql
-   ```
-5. Registre seu subdomínio `workers.dev` no painel Cloudflare, se ainda não existir, e publique a API:
-   ```bash
-   npm run api:deploy
-   ```
+Os MP3s não são enviados ao GitHub. Para reproduzir áudio localmente, inclua apenas arquivos autorizados em `public/audio/`, usando os nomes indicados em [CREDITS.md](./CREDITS.md). A pasta `public/audio/` permanece ignorada pelo Git.
 
-## Publicar no Cloudflare Pages sem R2
+## Arquitetura e deploy
 
-1. Crie `.env.production` com a URL do Worker:
-   ```env
-   VITE_API_BASE_URL=https://SEU-WORKER.SEUSUBDOMINIO.workers.dev
-   ```
-2. Copie os MP3s permitidos para `public/audio/` e confirme que a pasta continua ignorada pelo Git.
-3. Gere e publique o build:
-   ```bash
-   npm run build
-   npx wrangler pages project create soundwave --production-branch=main
-   npx wrangler pages deploy dist --project-name=soundwave --branch=main
-   ```
+- O frontend e os áudios de demonstração são publicados no [Cloudflare Pages](https://pages.cloudflare.com/).
+- A API `GET /api/catalog` é executada no [Cloudflare Workers](https://workers.cloudflare.com/).
+- Artistas, faixas e caminhos de áudio são armazenados no [Cloudflare D1](https://developers.cloudflare.com/d1/).
 
-O Cloudflare Pages Free aceita até 20.000 arquivos por site e até 25 MiB por arquivo estático. Para este projeto, os 10 MP3s totalizam cerca de 35 MB e cada arquivo fica abaixo desse limite.
+Para publicar alterações do frontend:
 
-## Direitos, créditos e licença de uso
+```bash
+npm run build
+npx wrangler pages deploy dist --project-name=soundwave --branch=main
+```
 
-O código e a documentação deste projeto estão sob a [Licença de Portfólio SoundWave](./LICENSE.md), atribuída a **Alessandro Candido ([@candidozara](https://github.com/candidozara))**. A licença permite visualizar e avaliar o projeto, mas proíbe republicá-lo, distribuí-lo, fazer deploy de cópias ou apresentá-lo como obra própria sem autorização expressa.
+## Créditos, direitos e licença
 
-- Não use marca, interface, catálogo, músicas ou arquivos do Spotify.
-- Use somente conteúdo próprio ou licenciado para redistribuição.
-- Preserve título, contribuidor e origem de cada faixa no [CREDITS.md](./CREDITS.md).
-- Antes de qualquer uso público, confira os termos da página de origem de cada áudio.
+- As faixas de demonstração foram obtidas de contribuidores do Pixabay Music; os créditos estão em [CREDITS.md](./CREDITS.md).
+- Use apenas conteúdo próprio ou devidamente licenciado em qualquer versão pública do projeto.
+- O código e a documentação seguem a [Licença de Portfólio SoundWave](./LICENSE.md), atribuída a **Alessandro Candido ([@candidozara](https://github.com/candidozara))**.
+- É permitido visualizar e avaliar o projeto; é proibido republicá-lo, distribuí-lo, hospedá-lo como cópia ou apresentá-lo como obra própria sem autorização expressa.
