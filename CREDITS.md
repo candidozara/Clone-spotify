@@ -1,4 +1,4 @@
-# [SoundWave — versão oficial publicada](https://soundwave-1au.pages.dev)
+# [SoundWave: Acesse a versão publicada](https://soundwave-1au.pages.dev)
 
 ## Créditos das faixas de demonstração
 
