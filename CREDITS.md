@@ -1,5 +1,7 @@
 # Créditos das faixas de demonstração
 
+> **Acesse a versão oficial do SoundWave:** [soundwave-1au.pages.dev](https://soundwave-1au.pages.dev)
+
 As faixas de demonstração foram baixadas pelo proprietário do projeto no Pixabay Music e não são distribuídas no repositório GitHub. Os nomes abaixo preservam os créditos identificados nos arquivos recebidos.
 
 | Arquivo local | Título exibido | Contribuidor creditado |
