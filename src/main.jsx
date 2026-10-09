@@ -10,89 +10,138 @@ const audioPathByTrackId = {
   7: '/audio/mickeyscat-moment-of-peace-mickeyscat-554494.mp3', 8: '/audio/musicdream-dramatic-cinematic-documentary-609202.mp3',
   9: '/audio/sigmamusicart-football-football-music-551346.mp3', 10: '/audio/sigmamusicart-no-copyright-music-537751.mp3'
 };
-const vibes = { 1:'Festa', 2:'Noturna', 3:'Cinemática', 4:'Festa', 5:'Energia', 6:'Cinemática', 7:'Calma', 8:'Cinemática', 9:'Energia', 10:'Noturna' };
-const artistImageById = { 1:'/images/artists/alec-koff.webp', 2:'/images/artists/audiocopper.webp', 3:'/images/artists/grand-project.webp', 4:'/images/artists/kontraa.webp', 5:'/images/artists/lnplusmusic.webp', 6:'/images/artists/mickeyscat.webp', 7:'/images/artists/musicdream.webp', 8:'/images/artists/sigmamusicart.webp' };
-const coverPathByTrackId = { 1:'/images/covers/carnaval.webp', 2:'/images/covers/dark.webp', 3:'/images/covers/wonders-of-the-earth.webp', 4:'/images/covers/water-afro-pop-music.webp', 5:'/images/covers/sport-sports-rock-music.webp', 6:'/images/covers/suspense-tension-horror-trailer.webp', 7:'/images/covers/moment-of-peace.webp', 8:'/images/covers/dramatic-cinematic-documentary.webp', 9:'/images/covers/football-football-music.webp', 10:'/images/covers/no-copyright-music.webp' };
-const withAudioPaths = catalog => ({ ...catalog, artists: catalog.artists.map(artist => ({ ...artist, image_path: artist.image_path || artistImageById[artist.id] })), tracks: catalog.tracks.map(track => ({ ...track, audio_path: track.audio_path || audioPathByTrackId[track.id], cover_path: track.cover_path || coverPathByTrackId[track.id], vibe: vibes[track.id] || 'Descobrir' })) });
-const demo = { artists:[{id:1,name:'Alec Koff',genre:'Pixabay Music',color:'#8b5cf6'},{id:2,name:'Audiocopper',genre:'Pixabay Music',color:'#64748b'},{id:3,name:'Grand Project',genre:'Pixabay Music',color:'#0ea5e9'},{id:4,name:'Kontraa',genre:'Pixabay Music',color:'#14b8a6'},{id:5,name:'LNPlusMusic',genre:'Pixabay Music',color:'#ef4444'},{id:6,name:'Mickeyscat',genre:'Pixabay Music',color:'#ec4899'},{id:7,name:'Musicdream',genre:'Pixabay Music',color:'#f97316'},{id:8,name:'SigmaMusicArt',genre:'Pixabay Music',color:'#f59e0b'}], tracks:[{id:1,title:'Carnaval',artist_id:1,artist:'Alec Koff',duration:0,accent:'#8b5cf6'},{id:2,title:'Dark',artist_id:2,artist:'Audiocopper',duration:0,accent:'#64748b'},{id:3,title:'Wonders of the Earth',artist_id:3,artist:'Grand Project',duration:0,accent:'#0ea5e9'},{id:4,title:'Water Afro Pop Music',artist_id:4,artist:'Kontraa',duration:0,accent:'#14b8a6'},{id:5,title:'Sport Sports Rock Music',artist_id:5,artist:'LNPlusMusic',duration:0,accent:'#ef4444'},{id:6,title:'Suspense Tension Horror Trailer',artist_id:5,artist:'LNPlusMusic',duration:0,accent:'#dc2626'},{id:7,title:'Moment of Peace',artist_id:6,artist:'Mickeyscat',duration:0,accent:'#ec4899'},{id:8,title:'Dramatic Cinematic Documentary',artist_id:7,artist:'Musicdream',duration:0,accent:'#f97316'},{id:9,title:'Football Football Music',artist_id:8,artist:'SigmaMusicArt',duration:0,accent:'#f59e0b'},{id:10,title:'No Copyright Music',artist_id:8,artist:'SigmaMusicArt',duration:0,accent:'#eab308'}] };
-const fmt = seconds => Number.isFinite(seconds) && seconds > 0 ? `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2,'0')}` : '--:--';
-const Icon = ({ children }) => <span className="icon" aria-hidden="true">{children}</span>;
+const coverPathByTrackId = {
+  1: '/images/covers/carnaval.webp', 2: '/images/covers/dark.webp', 3: '/images/covers/wonders-of-the-earth.webp', 4: '/images/covers/water-afro-pop-music.webp',
+  5: '/images/covers/sport-sports-rock-music.webp', 6: '/images/covers/suspense-tension-horror-trailer.webp', 7: '/images/covers/moment-of-peace.webp',
+  8: '/images/covers/dramatic-cinematic-documentary.webp', 9: '/images/covers/football-football-music.webp', 10: '/images/covers/no-copyright-music.webp'
+};
+const demo = {
+  artists: [
+    { id: 1, name: 'Alec Koff', genre: 'Pixabay Music' }, { id: 2, name: 'Audiocopper', genre: 'Pixabay Music' },
+    { id: 3, name: 'Grand Project', genre: 'Pixabay Music' }, { id: 4, name: 'Kontraa', genre: 'Pixabay Music' },
+    { id: 5, name: 'LNPlusMusic', genre: 'Pixabay Music' }, { id: 6, name: 'Mickeyscat', genre: 'Pixabay Music' },
+    { id: 7, name: 'Musicdream', genre: 'Pixabay Music' }, { id: 8, name: 'SigmaMusicArt', genre: 'Pixabay Music' }
+  ],
+  tracks: [
+    { id: 1, title: 'Carnaval', artist_id: 1, artist: 'Alec Koff', duration: 0 }, { id: 2, title: 'Dark', artist_id: 2, artist: 'Audiocopper', duration: 0 },
+    { id: 3, title: 'Wonders of the Earth', artist_id: 3, artist: 'Grand Project', duration: 0 }, { id: 4, title: 'Water Afro Pop Music', artist_id: 4, artist: 'Kontraa', duration: 0 },
+    { id: 5, title: 'Sport Sports Rock Music', artist_id: 5, artist: 'LNPlusMusic', duration: 0 }, { id: 6, title: 'Suspense Tension Horror Trailer', artist_id: 5, artist: 'LNPlusMusic', duration: 0 },
+    { id: 7, title: 'Moment of Peace', artist_id: 6, artist: 'Mickeyscat', duration: 0 }, { id: 8, title: 'Dramatic Cinematic Documentary', artist_id: 7, artist: 'Musicdream', duration: 0 },
+    { id: 9, title: 'Football Football Music', artist_id: 8, artist: 'SigmaMusicArt', duration: 0 }, { id: 10, title: 'No Copyright Music', artist_id: 8, artist: 'SigmaMusicArt', duration: 0 }
+  ]
+};
+const modules = [
+  ['01', 'Governança, sistema de gestão e sociedade', 'Fundamentos para decisões que sustentam o negócio.'],
+  ['02', 'Planejamento estratégico na prática', 'Direção, escolha e execução com método.'],
+  ['03', 'O papel do fundador', 'Estratégia, gestão e cultura sob responsabilidade de quem lidera.'],
+  ['04', 'Cultura: a 6ª marcha da estratégia', 'Princípios claros para uma operação que não depende do acaso.'],
+  ['05', 'Ecossistema de vendas', 'Receita, margem e previsibilidade em uma única visão.'],
+  ['06', 'Mentalidade de Growth', 'Crescimento que começa no processo e se prova no resultado.'],
+  ['07', 'Inteligência Artificial estratégica', 'IA como aliança para decisões melhores e execução mais rápida.']
+];
+const enrichCatalog = catalog => ({
+  ...catalog,
+  tracks: catalog.tracks.map(track => ({ ...track, audio_path: track.audio_path || audioPathByTrackId[track.id], cover_path: track.cover_path || coverPathByTrackId[track.id] }))
+});
+const fmt = seconds => Number.isFinite(seconds) && seconds > 0 ? `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}` : '—:—';
+const scrollTo = id => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
 function App() {
-  const [data, setData] = useState(withAudioPaths(demo));
-  const [source, setSource] = useState('modo demonstração');
+  const [data, setData] = useState(enrichCatalog(demo));
+  const [source, setSource] = useState('amostra técnica local');
   const [active, setActive] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [query, setQuery] = useState('');
-  const [vibe, setVibe] = useState('Tudo');
-  const [favorites, setFavorites] = useState(() => new Set());
+  const [filter, setFilter] = useState('todos');
+  const [favorites, setFavorites] = useState(() => new Set(JSON.parse(localStorage.getItem('g4-audio-favorites') || '[]')));
+  const [recent, setRecent] = useState(() => JSON.parse(localStorage.getItem('g4-audio-recent') || '[]'));
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const audioRef = useRef(null);
-  const featured = data.tracks[0];
-  const artists = data.artists.slice(0, 5);
 
   useEffect(() => {
-    fetch(`${API}/api/catalog`).then(r => r.ok ? r.json() : Promise.reject()).then(d => { setData(withAudioPaths(d)); setSource('catálogo D1'); }).catch(() => {});
+    fetch(`${API}/api/catalog`).then(r => r.ok ? r.json() : Promise.reject()).then(catalog => {
+      setData(enrichCatalog(catalog));
+      setSource('catálogo conectado');
+    }).catch(() => {});
   }, []);
-  useEffect(() => { if (active && audioRef.current) audioRef.current.play().catch(() => {}); }, [active]);
+  useEffect(() => localStorage.setItem('g4-audio-favorites', JSON.stringify([...favorites])), [favorites]);
+  useEffect(() => localStorage.setItem('g4-audio-recent', JSON.stringify(recent)), [recent]);
+  useEffect(() => { if (active && audioRef.current) audioRef.current.play().catch(() => setIsPlaying(false)); }, [active]);
 
-  const visibleTracks = useMemo(() => data.tracks.filter(track => {
-    const matchQuery = `${track.title} ${track.artist}`.toLowerCase().includes(query.toLowerCase());
-    return matchQuery && (vibe === 'Tudo' || track.vibe === vibe);
-  }), [data.tracks, query, vibe]);
-  const selectTrack = track => { setActive(track); setProgress(0); setDuration(track.duration || 0); };
-  const toggleFavorite = (event, id) => { event.stopPropagation(); setFavorites(current => { const next = new Set(current); next.has(id) ? next.delete(id) : next.add(id); return next; }); };
+  const tracks = useMemo(() => data.tracks.filter(track => {
+    const textMatch = `${track.title} ${track.artist}`.toLocaleLowerCase().includes(query.toLocaleLowerCase());
+    const filterMatch = filter === 'todos' || (filter === 'favoritos' && favorites.has(track.id)) || (filter === 'recentes' && recent.includes(track.id));
+    return textMatch && filterMatch;
+  }), [data.tracks, query, filter, favorites, recent]);
+
+  const selectTrack = track => {
+    setActive(track); setProgress(0); setDuration(track.duration || 0); setIsPlaying(true);
+    setRecent(current => [track.id, ...current.filter(id => id !== track.id)].slice(0, 5));
+  };
+  const toggleFavorite = id => setFavorites(current => {
+    const next = new Set(current); next.has(id) ? next.delete(id) : next.add(id); return next;
+  });
+  const togglePlayback = () => {
+    if (!active) return data.tracks[0] && selectTrack(data.tracks[0]);
+    if (audioRef.current?.paused) audioRef.current.play(); else audioRef.current?.pause();
+  };
   const playAdjacent = direction => {
-    if (!active) return selectTrack(data.tracks[0]);
+    if (!active) return data.tracks[0] && selectTrack(data.tracks[0]);
     const index = data.tracks.findIndex(track => track.id === active.id);
     selectTrack(data.tracks[(index + direction + data.tracks.length) % data.tracks.length]);
   };
+  const jump = seconds => {
+    if (!audioRef.current) return;
+    audioRef.current.currentTime = Math.max(0, Math.min(audioRef.current.duration || 0, audioRef.current.currentTime + seconds));
+  };
   const seek = event => { const next = Number(event.target.value); if (audioRef.current) audioRef.current.currentTime = next; setProgress(next); };
+  const favoriteTracks = data.tracks.filter(track => favorites.has(track.id));
 
   return <div className="app-shell">
     <aside className="sidebar">
-      <a className="brand" href="#home">sound<span>wave</span></a>
+      <a className="brand" href="#inicio" onClick={() => scrollTo('inicio')} aria-label="G4 Learning, início"><img src="/brand/g4-learning-logo-azul.svg" alt="G4 Learning"/></a>
+      <p className="nav-label">GESTÃO E ESTRATÉGIA</p>
       <nav aria-label="Navegação principal">
-        <a className="nav-item active" href="#home"><Icon>⌂</Icon>Início</a>
-        <a className="nav-item" href="#discover"><Icon>⌕</Icon>Descobrir</a>
-        <a className="nav-item" href="#library"><Icon>♬</Icon>Sua biblioteca</a>
+        <button className="nav-item active" onClick={() => scrollTo('inicio')}><span>01</span>Início</button>
+        <button className="nav-item" onClick={() => scrollTo('jornada')}><span>02</span>Sua jornada</button>
+        <button className="nav-item" onClick={() => scrollTo('biblioteca')}><span>03</span>Biblioteca</button>
       </nav>
-      <div className="sidebar-section"><p>SUA COLEÇÃO</p><a href="#favorites"><Icon>♥</Icon>Favoritas <b>{favorites.size}</b></a><a href="#catalog"><Icon>≡</Icon>Catálogo completo</a></div>
-      <div className="sidebar-foot"><span className="status-dot" />{source}</div>
+      <div className="sidebar-section"><p>SUA BIBLIOTECA</p><button onClick={() => { setFilter('favoritos'); scrollTo('biblioteca'); }}><span>◆</span>Favoritos <b>{favorites.size}</b></button><button onClick={() => { setFilter('recentes'); scrollTo('biblioteca'); }}><span>↺</span>Recentes</button></div>
+      <div className="sidebar-foot"><i />{source}</div>
     </aside>
 
-    <main className="content" id="home">
+    <main className="content" id="inicio">
       <header className="topbar">
-        <div className="crumb"><span>Para você</span><strong>Início</strong></div>
-        <label className="search"><Icon>⌕</Icon><input aria-label="Buscar no catálogo" placeholder="O que você quer ouvir?" value={query} onChange={event => setQuery(event.target.value)} /></label>
-        <a className="credits-link" href="https://github.com/candidozara/Clone-spotify/blob/main/CREDITS.md" target="_blank" rel="noreferrer">Créditos</a>
+        <p>GESTÃO E ESTRATÉGIA <b>/</b> ÁUDIO</p>
+        <label className="search"><span>⌕</span><input aria-label="Buscar na biblioteca de demonstração" placeholder="Buscar na biblioteca" value={query} onChange={event => { setQuery(event.target.value); setFilter('todos'); }}/></label>
+        <a className="credits-link" href="https://github.com/candidozara/Clone-spotify/blob/main/CREDITS.md" target="_blank" rel="noreferrer">Créditos da amostra</a>
       </header>
 
-      <section className="hero-card" aria-labelledby="hero-title" style={{ '--hero-image': `url(/images/hero/soundwave-hero-background.webp)` }}>
-        <div className="orb orb-one" /><div className="orb orb-two" />
-        <div className="hero-copy"><p className="kicker">SELEÇÃO EM DESTAQUE</p><h1 id="hero-title">Som para cada<br/><em>momento seu.</em></h1><p>Encontre trilhas que acompanham o seu ritmo, do foco à celebração.</p><div className="hero-actions"><button className="primary-play" onClick={() => selectTrack(featured)}><Icon>▶</Icon>Ouvir agora</button><a href="#discover" className="secondary-action">Explorar seleções <b>→</b></a></div></div>
-        {featured && <button className="feature-art" onClick={() => selectTrack(featured)} aria-label={`Ouvir ${featured.title}`}><img src={featured.cover_path} alt=""/><i>▶</i></button>}
+      <section className="hero" aria-labelledby="hero-title">
+        <div className="hero-copy"><p className="eyebrow">G4 LEARNING</p><h1 id="hero-title">Conhecimento para decisões que <em>movem o negócio.</em></h1><p className="hero-text">Uma jornada de aprendizagem para líderes que querem construir com método, rigor e visão de longo prazo.</p><button className="primary-action" onClick={() => scrollTo('jornada')}>Conheça a jornada <span>→</span></button></div>
+        <div className="hero-mark" aria-hidden="true"><span>G4</span><small>GESTÃO<br/>E ESTRATÉGIA</small></div>
       </section>
 
-      <section className="quick-picks" aria-label="Atalhos de descoberta">
-        <button onClick={() => { setVibe('Energia'); document.getElementById('catalog')?.scrollIntoView({behavior:'smooth'}); }}><span className="pick-icon energy">↗</span><strong>Para dar energia</strong><small>Ritmo para avançar</small></button>
-        <button onClick={() => { setVibe('Calma'); document.getElementById('catalog')?.scrollIntoView({behavior:'smooth'}); }}><span className="pick-icon calm">☾</span><strong>Para desacelerar</strong><small>Pausa para respirar</small></button>
-        <button onClick={() => { setVibe('Cinemática'); document.getElementById('catalog')?.scrollIntoView({behavior:'smooth'}); }}><span className="pick-icon cinema">✦</span><strong>Para imaginar</strong><small>Trilhas em movimento</small></button>
+      <section className="principles" aria-label="Princípios da experiência"><p><b>Direção</b><span>Estratégia antes de velocidade.</span></p><p><b>Método</b><span>Conteúdo para aplicação real.</span></p><p><b>Rigor</b><span>Decisões sustentadas por processo.</span></p></section>
+
+      <section className="journey" id="jornada" aria-labelledby="journey-title">
+        <div className="section-heading"><div><p className="eyebrow">JORNADA DE APRENDIZAGEM</p><h2 id="journey-title">Sua jornada de<br/><em>Gestão e Estratégia.</em></h2></div><p>Sete frentes para estruturar decisões, pessoas e crescimento.</p></div>
+        <div className="module-grid">{modules.map(([number, title, description]) => <article className="module-card" key={number}><span>{number}</span><h3>{title}</h3><p>{description}</p><i>EM ESTRUTURAÇÃO EDITORIAL</i></article>)}</div>
       </section>
 
-      <section className="artist-showcase" id="artists" aria-labelledby="artists-title"><div className="section-title"><div><p className="kicker">QUEM FAZ O SOM</p><h2 id="artists-title">Conheça os artistas</h2></div><span>Identidades visuais originais</span></div><div className="artist-gallery">{data.artists.map(artist => <button className="artist-card" key={artist.id} onClick={() => { setQuery(artist.name); setVibe('Tudo'); document.getElementById('catalog')?.scrollIntoView({behavior:'smooth'}); }}><div className="portrait-slot"><img src={artist.image_path} alt=""/><small>ARTE<br/>EDITORIAL</small><i>+</i></div><div className="artist-card-copy"><strong>{artist.name}</strong><span>{artist.genre}</span><em>Ver faixas <b>→</b></em></div></button>)}</div><p className="photo-disclaimer">Identidades visuais originais para o catálogo; créditos musicais preservados.</p></section>
-
-      <section className="discover" id="discover"><div className="section-title"><div><p className="kicker">EXPLORE POR CLIMA</p><h2>Feito para o seu agora</h2></div><span>{data.tracks.length} faixas disponíveis</span></div><div className="vibe-tabs">{['Tudo','Energia','Calma','Cinemática','Festa','Noturna'].map(item => <button key={item} className={vibe === item ? 'selected' : ''} onClick={() => setVibe(item)}>{item}</button>)}</div></section>
-
-      <section className="catalog-grid" id="catalog"><div className="track-panel"><div className="list-heading"><h2>Faixas para você</h2><button className="text-button" onClick={() => { setVibe('Tudo'); setQuery(''); }}>Limpar filtros</button></div><div className="track-list">{visibleTracks.length ? visibleTracks.map((track, index) => <div className={`track-row ${active?.id === track.id ? 'playing' : ''}`} key={track.id} role="button" tabIndex="0" onClick={() => selectTrack(track)} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectTrack(track); } }}> <span className="track-index">{active?.id === track.id ? <i className="equalizer">▮▮▮</i> : String(index + 1).padStart(2,'0')}</span><img className="artwork" src={track.cover_path} alt=""/><span className="track-meta"><strong>{track.title}</strong><small>{track.artist} · {track.vibe}</small></span><span className="track-duration">{fmt(track.duration)}</span><span className="row-actions"><button className={favorites.has(track.id) ? 'favorite saved' : 'favorite'} onClick={event => toggleFavorite(event, track.id)} aria-label="Adicionar aos favoritos">♥</button><span className="play-mini">▶</span></span></div>) : <div className="empty-state"><b>Nenhuma faixa encontrada</b><span>Tente buscar por outro termo ou escolha outro clima.</span></div>}</div></div>
-        <aside className="right-rail" id="library"><div className="rail-card"><p className="kicker">CONTRIBUIDORES</p><h3>Vozes deste catálogo</h3>{artists.map(artist => <div className="artist" key={artist.id}><img className="artist-avatar" src={artist.image_path} alt=""/><span><strong>{artist.name}</strong><small>{artist.genre}</small></span><b>›</b></div>)}<a href="https://github.com/candidozara/Clone-spotify/blob/main/CREDITS.md" target="_blank" rel="noreferrer">Ver todos os créditos →</a></div><div className="rail-note"><span>✦</span><p>Faixas de demonstração com atribuição preservada.</p></div></aside>
+      <section className="library" id="biblioteca" aria-labelledby="library-title">
+        <div className="section-heading"><div><p className="eyebrow">AMOSTRA TÉCNICA</p><h2 id="library-title">Biblioteca de áudio.</h2></div><p>Faixas licenciadas para validar a experiência de reprodução. Não fazem parte do conteúdo editorial G4.</p></div>
+        <div className="library-toolbar"><div className="filter-tabs" aria-label="Filtros da biblioteca"><button className={filter === 'todos' ? 'selected' : ''} onClick={() => setFilter('todos')}>Todos <b>{data.tracks.length}</b></button><button className={filter === 'favoritos' ? 'selected' : ''} onClick={() => setFilter('favoritos')}>Favoritos <b>{favorites.size}</b></button><button className={filter === 'recentes' ? 'selected' : ''} onClick={() => setFilter('recentes')}>Recentes <b>{recent.length}</b></button></div><button className="text-action" onClick={() => { setFilter('todos'); setQuery(''); }}>Limpar busca e filtros</button></div>
+        <div className="catalog-layout"><div className="track-panel"><div className="track-header"><span>CONTEÚDO</span><span>ORIGEM</span><span>AÇÃO</span></div>{tracks.length ? tracks.map(track => <article className={`track-row ${active?.id === track.id ? 'playing' : ''}`} key={track.id}><button className="track-main" onClick={() => selectTrack(track)} aria-label={`Reproduzir ${track.title}`}><img src={track.cover_path} alt=""/><span className="track-meta"><strong>{track.title}</strong><small>Áudio de demonstração</small></span></button><span className="track-origin">{track.artist}<small>Pixabay Music</small></span><div className="row-actions"><button className={favorites.has(track.id) ? 'favorite saved' : 'favorite'} onClick={() => toggleFavorite(track.id)} aria-label={favorites.has(track.id) ? `Remover ${track.title} dos favoritos` : `Adicionar ${track.title} aos favoritos`}>◆</button><button className="play-button" onClick={() => selectTrack(track)} aria-label={`Reproduzir ${track.title}`}>{active?.id === track.id && isPlaying ? 'Ⅱ' : '▶'}</button></div></article>) : <div className="empty-state"><strong>Nenhuma faixa encontrada.</strong><span>Ajuste a busca ou limpe os filtros da biblioteca.</span><button onClick={() => { setFilter('todos'); setQuery(''); }}>Ver biblioteca completa</button></div>}</div>
+          <aside className="library-note"><p className="eyebrow">SOBRE ESTA BIBLIOTECA</p><h3>Conteúdo exige contexto.</h3><p>Os áudios desta área existem para testar a experiência técnica de player. Os créditos e licenças permanecem disponíveis no repositório.</p><a href="https://github.com/candidozara/Clone-spotify/blob/main/CREDITS.md" target="_blank" rel="noreferrer">Consultar créditos <span>→</span></a>{favoriteTracks.length > 0 && <div className="favorite-summary"><span>SELECIONADAS</span><strong>{favoriteTracks.length} {favoriteTracks.length === 1 ? 'faixa salva' : 'faixas salvas'}</strong></div>}</aside>
+        </div>
       </section>
-
-      <footer>Um catálogo musical criado para demonstrar React, Vite, Cloudflare Workers e D1, com faixas de demonstração devidamente creditadas.</footer>
+      <footer><img src="/brand/g4-learning-logo-azul.svg" alt="G4 Learning"/><p>Gestão e Estratégia em áudio. Estrutura de experiência em evolução.</p><a href="https://github.com/candidozara/Clone-spotify" target="_blank" rel="noreferrer">Ver projeto</a></footer>
     </main>
 
-    <nav className="mobile-nav" aria-label="Navegação móvel"><a className="active" href="#home">⌂<span>Início</span></a><a href="#discover">⌕<span>Explorar</span></a><a href="#library">♬<span>Biblioteca</span></a></nav>
-    {active && <section className="player" aria-label="Reprodutor atual"><div className="now-art"><img src={active.cover_path} alt=""/></div><div className="now-meta"><strong>{active.title}</strong><span>{active.artist}</span></div><div className="player-center"><div className="player-controls"><button onClick={() => playAdjacent(-1)} aria-label="Faixa anterior">↶</button><button className="pause-play" onClick={() => audioRef.current?.paused ? audioRef.current.play() : audioRef.current?.pause()} aria-label="Pausar ou reproduzir">▶</button><button onClick={() => playAdjacent(1)} aria-label="Próxima faixa">↷</button></div><div className="timeline"><span>{fmt(progress)}</span><input aria-label="Progresso da faixa" type="range" min="0" max={duration || 1} value={Math.min(progress, duration || 1)} onChange={seek}/><span>{fmt(duration)}</span></div></div><button className="close-player" onClick={() => { audioRef.current?.pause(); setActive(null); }} aria-label="Fechar player">×</button><audio ref={audioRef} autoPlay src={active.audio_path} onLoadedMetadata={event => setDuration(event.currentTarget.duration)} onTimeUpdate={event => setProgress(event.currentTarget.currentTime)} onEnded={() => playAdjacent(1)}>Seu navegador não suporta reprodução de áudio.</audio></section>}
+    <nav className="mobile-nav" aria-label="Navegação móvel"><button onClick={() => scrollTo('inicio')}><span>01</span>Início</button><button onClick={() => scrollTo('jornada')}><span>02</span>Jornada</button><button onClick={() => scrollTo('biblioteca')}><span>03</span>Biblioteca</button></nav>
+    {active && <section className="player" aria-label="Reprodutor atual"><img className="now-art" src={active.cover_path} alt=""/><div className="now-meta"><strong>{active.title}</strong><span>Áudio de demonstração · {active.artist}</span></div><div className="player-center"><div className="player-controls"><button onClick={() => playAdjacent(-1)} aria-label="Faixa anterior">‹</button><button onClick={() => jump(-15)} aria-label="Voltar 15 segundos">−15</button><button className="pause-play" onClick={togglePlayback} aria-label={isPlaying ? 'Pausar' : 'Reproduzir'}>{isPlaying ? 'Ⅱ' : '▶'}</button><button onClick={() => jump(15)} aria-label="Avançar 15 segundos">+15</button><button onClick={() => playAdjacent(1)} aria-label="Próxima faixa">›</button></div><div className="timeline"><span>{fmt(progress)}</span><input aria-label="Progresso da faixa" type="range" min="0" max={duration || 1} value={Math.min(progress, duration || 1)} onChange={seek}/><span>{fmt(duration)}</span></div></div><button className="close-player" onClick={() => { audioRef.current?.pause(); setActive(null); setIsPlaying(false); }} aria-label="Fechar player">×</button><audio ref={audioRef} autoPlay src={active.audio_path} onPlay={() => setIsPlaying(true)} onPause={() => setIsPlaying(false)} onLoadedMetadata={event => setDuration(event.currentTarget.duration)} onTimeUpdate={event => setProgress(event.currentTarget.currentTime)} onEnded={() => playAdjacent(1)}>Seu navegador não suporta reprodução de áudio.</audio></section>}
   </div>;
 }
 createRoot(document.getElementById('root')).render(<App/>);

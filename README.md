@@ -1,48 +1,37 @@
-# SoundWave — Plataforma de Streaming Musical
+# G4 Gestão e Estratégia — Áudio
 
-Uma plataforma autoral de música criada como projeto da pós em IA APLICADA da UNIPDS e portfólio, explorando experiências modernas de descoberta e reprodução de áudio na web.
+Uma experiência editorial de aprendizagem em áudio, desenvolvida como exercício de interface e portfólio durante a pós-graduação em IA Aplicada da UNIPDS. O projeto combina uma jornada de Gestão e Estratégia com um player funcional de demonstração técnica.
 
-## Sobre o projeto
+## O que é este projeto
 
-O SoundWave inclui procura e descoberta de faixas, busca, catálogos e reprodução contínua..
+A interface organiza uma jornada em sete frentes estratégicas:
 
-Durante o desenvolvimento, foram praticados conceitos como:
+1. Governança, sistema de gestão e sociedade
+2. Planejamento estratégico na prática
+3. O papel do fundador
+4. Cultura: a 6ª marcha da estratégia
+5. Ecossistema de vendas
+6. Mentalidade de Growth
+7. Inteligência Artificial estratégica
 
-- Manipulação de áudio no navegador com o elemento `audio`.
-- Consumo de API para carregar artistas e faixas.
-- Construção de uma interface responsiva para desktop e celular.
-- Busca, filtros por clima musical e descoberta por artista.
-- Gerenciamento de estado no React para player, favoritos e catálogo.
-- Deploy de frontend, API e banco de dados em serviços Cloudflare.
+Esses temas compõem a estrutura editorial da experiência. Este repositório **não contém episódios, mentores, imagens ou áudios oficiais desses módulos**. A biblioteca reproduz dez faixas licenciadas e creditadas somente para validar a tecnologia do player; elas não representam conteúdo educacional G4.
 
-> O SoundWave é um projeto independente e não possui vínculo, afiliação ou uso de marca, interface, músicas ou arquivos do Spotify.
+## Experiência implementada
 
-## Funcionalidades principais
+- Interface editorial responsiva para desktop e celular.
+- Navegação entre Início, Jornada e Biblioteca.
+- Jornada com sete módulos estratégicos, sem ações que simulem conteúdo inexistente.
+- Busca por título ou contribuinte na biblioteca de demonstração.
+- Favoritos persistidos localmente no navegador.
+- Histórico local de faixas recentes.
+- Player persistente com reprodução, pausa, avanço, retrocesso, troca de faixa e barra de progresso.
+- Catálogo público via Cloudflare Worker e dados persistidos no Cloudflare D1.
 
-### Disponíveis
+## Direção de design
 
-- Player de música persistente com progresso, avanço, retrocesso e encerramento da reprodução.
-- Catálogo com 10 faixas de demonstração devidamente creditadas.
-- Busca por título ou artista.
-- Filtros de descoberta por clima: Energia, Calma, Cinemática, Festa e Noturna.
-- Galeria visual de artistas/contribuidores com espaços preparados para fotos autorizadas.
-- Atalho para visualizar as faixas de cada artista.
-- Favoritos locais durante a sessão de navegação.
-- Design responsivo para desktop e dispositivos móveis.
-- API pública para o catálogo musical com dados persistidos no Cloudflare D1.
+O redesign utiliza o logo autorizado G4 Learning e regras confirmadas no Brand Center: Navy Blue, Royal Golden, Royal Silver e tipografia Manrope/Libre Baskerville. A fonte PP Museum não foi incluída porque requer licença/pacote autorizado. As decisões e limites de conteúdo estão documentados em [`docs/REDESIGN-AUDIT.md`](./docs/REDESIGN-AUDIT.md).
 
-### Em evolução
-
-- Criação e salvamento de playlists personalizadas.
-- Perfis e preferências persistentes de usuários.
-- Página individual para cada artista.
-- Fila de reprodução e histórico de faixas ouvidas.
-- Recomendações personalizadas com base em favoritos, histórico e climas musicais mais ouvidos.
-- Playlists colaborativas com compartilhamento controlado e permissões para adicionar ou reorganizar faixas.
-- Experiência PWA com modo offline para catálogo e playlists, respeitando os direitos de distribuição de cada áudio.
-- Transições inteligentes entre faixas, incluindo crossfade, normalização de volume e reordenação da fila de reprodução.
-
-## Tecnologias utilizadas
+## Tecnologias
 
 | Camada | Tecnologias |
 |---|---|
@@ -52,73 +41,49 @@ Durante o desenvolvimento, foram praticados conceitos como:
 | Hospedagem | [Cloudflare Pages](https://pages.cloudflare.com/) |
 | Ferramentas | [Wrangler](https://developers.cloudflare.com/workers/wrangler/) e Git/GitHub |
 
-## Links úteis e referências
+## Links
 
-- [Acessar o SoundWave publicado](https://soundwave-1au.pages.dev)
+- [Abrir a versão publicada](https://soundwave-1au.pages.dev)
 - [Repositório no GitHub](https://github.com/candidozara/Clone-spotify)
 - [API pública do catálogo](https://soundwave-api.candidozara.workers.dev/api/catalog)
 - [Créditos das faixas de demonstração](./CREDITS.md)
 - [Licença de uso do projeto](./LICENSE.md)
-- [Adicionar referência visual no Figma](https://www.figma.com/) — substitua este link pelo protótipo do projeto quando ele existir.
-- [Documentação do React](https://react.dev/learn)
-- [Documentação do Cloudflare Workers](https://developers.cloudflare.com/workers/)
 
-## Como executar o projeto
+## Executar localmente
 
 ### Pré-requisitos
 
-- [Node.js](https://nodejs.org/) 18 ou superior.
-- [Git](https://git-scm.com/).
+- [Node.js](https://nodejs.org/) 18 ou superior
+- [Git](https://git-scm.com/)
 
-### Instalação
+```bash
+git clone https://github.com/candidozara/Clone-spotify.git
+cd Clone-spotify
+npm install
+npm run dev
+```
 
-1. Clone o repositório:
-
-   ```bash
-   git clone https://github.com/candidozara/Clone-spotify.git
-   ```
-
-2. Entre na pasta do projeto:
-
-   ```bash
-   cd Clone-spotify
-   ```
-
-3. Instale as dependências:
-
-   ```bash
-   npm install
-   ```
-
-4. Inicie o ambiente de desenvolvimento:
-
-   ```bash
-   npm run dev
-   ```
-
-5. Abra no navegador o endereço exibido pelo Vite — normalmente [http://localhost:5173](http://localhost:5173).
+Abra o endereço indicado pelo Vite, normalmente [http://localhost:5173](http://localhost:5173).
 
 ### Build de produção
-
-Para gerar uma versão otimizada do frontend:
 
 ```bash
 npm run build
 ```
 
-Os arquivos de produção serão criados na pasta `dist/`.
+Os arquivos de produção são criados em `dist/`.
 
 ### Áudios de demonstração no ambiente local
 
-Os MP3s não são enviados ao GitHub. Para reproduzir áudio localmente, inclua apenas arquivos autorizados em `public/audio/`, usando os nomes indicados em [CREDITS.md](./CREDITS.md). A pasta `public/audio/` permanece ignorada pelo Git.
+Os MP3s não são enviados ao GitHub. Para habilitar a reprodução local, inclua somente arquivos autorizados em `public/audio/`, com os nomes indicados em [`CREDITS.md`](./CREDITS.md). A pasta continua ignorada pelo Git.
 
 ## Arquitetura e deploy
 
-- O frontend e os áudios de demonstração são publicados no [Cloudflare Pages](https://pages.cloudflare.com/).
-- A API `GET /api/catalog` é executada no [Cloudflare Workers](https://workers.cloudflare.com/).
-- Artistas, faixas e caminhos de áudio são armazenados no [Cloudflare D1](https://developers.cloudflare.com/d1/).
+- Frontend e áudios de demonstração: [Cloudflare Pages](https://pages.cloudflare.com/).
+- Catálogo `GET /api/catalog`: [Cloudflare Workers](https://workers.cloudflare.com/).
+- Artistas, faixas e caminhos de áudio: [Cloudflare D1](https://developers.cloudflare.com/d1/).
 
-Para publicar alterações do frontend:
+Para publicar alterações no frontend:
 
 ```bash
 npm run build
@@ -127,7 +92,7 @@ npx wrangler pages deploy dist --project-name=soundwave --branch=main
 
 ## Créditos, direitos e licença
 
-- As faixas de demonstração foram obtidas de contribuidores do Pixabay Music; os créditos estão em [CREDITS.md](./CREDITS.md).
-- Use apenas conteúdo próprio ou devidamente licenciado em qualquer versão pública do projeto.
-- O código e a documentação seguem a [Licença de Portfólio SoundWave](./LICENSE.md), atribuída a **Alessandro Candido ([@candidozara](https://github.com/candidozara))**.
-- É permitido visualizar e avaliar o projeto; é proibido republicá-lo, distribuí-lo, hospedá-lo como cópia ou apresentá-lo como obra própria sem autorização expressa.
+- As faixas de demonstração vêm de contribuidores do Pixabay Music. Consulte os créditos completos em [`CREDITS.md`](./CREDITS.md).
+- Use conteúdo próprio ou devidamente autorizado em qualquer versão pública.
+- Código e documentação estão sob a [Licença de Portfólio SoundWave](./LICENSE.md), atribuída a **Alessandro Candido ([@candidozara](https://github.com/candidozara))**.
+- É permitido visualizar e avaliar o projeto; é proibido republicá-lo, distribuí-lo, hospedá-lo como cópia, modificá-lo ou apresentá-lo como obra própria sem autorização expressa.
