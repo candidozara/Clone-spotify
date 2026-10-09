@@ -1,5 +1,32 @@
--- Carga editorial inicial: módulos aprovados pelo deck.
--- Não há conteúdos reproduzíveis até que áudios reais sejam publicados.
+-- Catálogo editorial G4 Gestão e Estratégia.
+-- Não remove tabelas de demonstração legadas; a API passa a consultar somente estas tabelas.
+CREATE TABLE IF NOT EXISTS learning_modules (
+  id INTEGER PRIMARY KEY,
+  module_number INTEGER NOT NULL UNIQUE CHECK(module_number BETWEEN 1 AND 7),
+  pillar TEXT NOT NULL,
+  title TEXT NOT NULL,
+  short_description TEXT NOT NULL,
+  long_description TEXT NOT NULL,
+  application_question TEXT NOT NULL,
+  tags_json TEXT NOT NULL DEFAULT '[]',
+  availability TEXT NOT NULL DEFAULT 'coming_soon' CHECK(availability IN ('coming_soon', 'published', 'archived')),
+  sort_order INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS learning_content (
+  id INTEGER PRIMARY KEY,
+  module_id INTEGER REFERENCES learning_modules(id),
+  title TEXT NOT NULL,
+  short_description TEXT NOT NULL,
+  content_type TEXT NOT NULL CHECK(content_type IN ('series_episode', 'mentor_pill', 'case_audio', 'complementary_audio')),
+  audio_path TEXT,
+  duration_seconds INTEGER,
+  availability TEXT NOT NULL DEFAULT 'coming_soon' CHECK(availability IN ('coming_soon', 'published', 'archived')),
+  published_at TEXT,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  CHECK((availability = 'published' AND audio_path IS NOT NULL AND duration_seconds IS NOT NULL AND duration_seconds > 0) OR availability != 'published')
+);
+
 INSERT OR IGNORE INTO learning_modules (id, module_number, pillar, title, short_description, long_description, application_question, tags_json, availability, sort_order) VALUES
 (1, 1, 'Legado', 'Governança: como preparar a empresa para crescer além do fundador', 'Estruture as bases de decisão, responsabilidades e gestão para que a empresa cresça com mais clareza e continuidade.', 'Quando a empresa cresce, decisões informais e dependência de poucas pessoas podem se tornar limites. Explore quando estruturar a governança, como pensar acordos de acionistas, definir alçadas entre sócios e administração e usar o sistema de gestão como base para o crescimento.', 'Quais decisões ainda dependem de acordos informais ou da intervenção direta do fundador?', '["Governança","Sistema de gestão","Sociedade","Alçadas","Acordo de acionistas","Legado"]', 'coming_soon', 1),
 (2, 2, 'Estratégia e Gestão', 'Do mercado às metas: transforme ambição em estratégia', 'Conecte oportunidades de mercado, posicionamento e objetivos a escolhas e indicadores concretos.', 'Uma estratégia útil parte da leitura do mercado e do posicionamento real da empresa. Explore como analisar concorrentes, reconhecer o potencial de mercado, construir uma visão de longo prazo e transformar ambições em ações com metas e indicadores claros.', 'Qual oportunidade relevante a empresa ainda não transformou em uma escolha estratégica explícita?', '["Estratégia","Mercado","Concorrência","Posicionamento","Metas","Indicadores"]', 'coming_soon', 2),

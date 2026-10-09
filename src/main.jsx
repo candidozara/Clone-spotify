@@ -1,147 +1,19 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { createRoot } from 'react-dom/client';
-import './styles.css';
-
-const API = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8787';
-const audioPathByTrackId = {
-  1: '/audio/alec_koff-carnaval-484622.mp3', 2: '/audio/audiocopper-dark-571483.mp3',
-  3: '/audio/grand_project-wonders-of-the-earth-550792.mp3', 4: '/audio/kontraa-water-afro-pop-music-445661.mp3',
-  5: '/audio/lnplusmusic-sport-sports-rock-music-597971.mp3', 6: '/audio/lnplusmusic-suspense-tension-horror-trailer-323181.mp3',
-  7: '/audio/mickeyscat-moment-of-peace-mickeyscat-554494.mp3', 8: '/audio/musicdream-dramatic-cinematic-documentary-609202.mp3',
-  9: '/audio/sigmamusicart-football-football-music-551346.mp3', 10: '/audio/sigmamusicart-no-copyright-music-537751.mp3'
-};
-const coverPathByTrackId = {
-  1: '/images/covers/carnaval.webp', 2: '/images/covers/dark.webp', 3: '/images/covers/wonders-of-the-earth.webp', 4: '/images/covers/water-afro-pop-music.webp',
-  5: '/images/covers/sport-sports-rock-music.webp', 6: '/images/covers/suspense-tension-horror-trailer.webp', 7: '/images/covers/moment-of-peace.webp',
-  8: '/images/covers/dramatic-cinematic-documentary.webp', 9: '/images/covers/football-football-music.webp', 10: '/images/covers/no-copyright-music.webp'
-};
-const demo = {
-  artists: [
-    { id: 1, name: 'Alec Koff', genre: 'Pixabay Music' }, { id: 2, name: 'Audiocopper', genre: 'Pixabay Music' },
-    { id: 3, name: 'Grand Project', genre: 'Pixabay Music' }, { id: 4, name: 'Kontraa', genre: 'Pixabay Music' },
-    { id: 5, name: 'LNPlusMusic', genre: 'Pixabay Music' }, { id: 6, name: 'Mickeyscat', genre: 'Pixabay Music' },
-    { id: 7, name: 'Musicdream', genre: 'Pixabay Music' }, { id: 8, name: 'SigmaMusicArt', genre: 'Pixabay Music' }
-  ],
-  tracks: [
-    { id: 1, title: 'Carnaval', artist_id: 1, artist: 'Alec Koff', duration: 0 }, { id: 2, title: 'Dark', artist_id: 2, artist: 'Audiocopper', duration: 0 },
-    { id: 3, title: 'Wonders of the Earth', artist_id: 3, artist: 'Grand Project', duration: 0 }, { id: 4, title: 'Water Afro Pop Music', artist_id: 4, artist: 'Kontraa', duration: 0 },
-    { id: 5, title: 'Sport Sports Rock Music', artist_id: 5, artist: 'LNPlusMusic', duration: 0 }, { id: 6, title: 'Suspense Tension Horror Trailer', artist_id: 5, artist: 'LNPlusMusic', duration: 0 },
-    { id: 7, title: 'Moment of Peace', artist_id: 6, artist: 'Mickeyscat', duration: 0 }, { id: 8, title: 'Dramatic Cinematic Documentary', artist_id: 7, artist: 'Musicdream', duration: 0 },
-    { id: 9, title: 'Football Football Music', artist_id: 8, artist: 'SigmaMusicArt', duration: 0 }, { id: 10, title: 'No Copyright Music', artist_id: 8, artist: 'SigmaMusicArt', duration: 0 }
-  ]
-};
-const modules = [
-  ['01', 'Governança, sistema de gestão e sociedade', 'Fundamentos para decisões que sustentam o negócio.'],
-  ['02', 'Planejamento estratégico na prática', 'Direção, escolha e execução com método.'],
-  ['03', 'O papel do fundador', 'Estratégia, gestão e cultura sob responsabilidade de quem lidera.'],
-  ['04', 'Cultura: a 6ª marcha da estratégia', 'Princípios claros para uma operação que não depende do acaso.'],
-  ['05', 'Ecossistema de vendas', 'Receita, margem e previsibilidade em uma única visão.'],
-  ['06', 'Mentalidade de Growth', 'Crescimento que começa no processo e se prova no resultado.'],
-  ['07', 'Inteligência Artificial estratégica', 'IA como aliança para decisões melhores e execução mais rápida.']
-];
-const enrichCatalog = catalog => ({
-  ...catalog,
-  tracks: catalog.tracks.map(track => ({ ...track, audio_path: track.audio_path || audioPathByTrackId[track.id], cover_path: track.cover_path || coverPathByTrackId[track.id] }))
-});
-const fmt = seconds => Number.isFinite(seconds) && seconds > 0 ? `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}` : '—:—';
-const scrollTo = id => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-function App() {
-  const [data, setData] = useState(enrichCatalog(demo));
-  const [source, setSource] = useState('amostra técnica local');
-  const [active, setActive] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [query, setQuery] = useState('');
-  const [filter, setFilter] = useState('todos');
-  const [favorites, setFavorites] = useState(() => new Set(JSON.parse(localStorage.getItem('g4-audio-favorites') || '[]')));
-  const [recent, setRecent] = useState(() => JSON.parse(localStorage.getItem('g4-audio-recent') || '[]'));
-  const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const audioRef = useRef(null);
-
-  useEffect(() => {
-    fetch(`${API}/api/catalog`).then(r => r.ok ? r.json() : Promise.reject()).then(catalog => {
-      setData(enrichCatalog(catalog));
-      setSource('catálogo conectado');
-    }).catch(() => {});
-  }, []);
-  useEffect(() => localStorage.setItem('g4-audio-favorites', JSON.stringify([...favorites])), [favorites]);
-  useEffect(() => localStorage.setItem('g4-audio-recent', JSON.stringify(recent)), [recent]);
-  useEffect(() => { if (active && audioRef.current) audioRef.current.play().catch(() => setIsPlaying(false)); }, [active]);
-
-  const tracks = useMemo(() => data.tracks.filter(track => {
-    const textMatch = `${track.title} ${track.artist}`.toLocaleLowerCase().includes(query.toLocaleLowerCase());
-    const filterMatch = filter === 'todos' || (filter === 'favoritos' && favorites.has(track.id)) || (filter === 'recentes' && recent.includes(track.id));
-    return textMatch && filterMatch;
-  }), [data.tracks, query, filter, favorites, recent]);
-
-  const selectTrack = track => {
-    setActive(track); setProgress(0); setDuration(track.duration || 0); setIsPlaying(true);
-    setRecent(current => [track.id, ...current.filter(id => id !== track.id)].slice(0, 5));
-  };
-  const toggleFavorite = id => setFavorites(current => {
-    const next = new Set(current); next.has(id) ? next.delete(id) : next.add(id); return next;
-  });
-  const togglePlayback = () => {
-    if (!active) return data.tracks[0] && selectTrack(data.tracks[0]);
-    if (audioRef.current?.paused) audioRef.current.play(); else audioRef.current?.pause();
-  };
-  const playAdjacent = direction => {
-    if (!active) return data.tracks[0] && selectTrack(data.tracks[0]);
-    const index = data.tracks.findIndex(track => track.id === active.id);
-    selectTrack(data.tracks[(index + direction + data.tracks.length) % data.tracks.length]);
-  };
-  const jump = seconds => {
-    if (!audioRef.current) return;
-    audioRef.current.currentTime = Math.max(0, Math.min(audioRef.current.duration || 0, audioRef.current.currentTime + seconds));
-  };
-  const seek = event => { const next = Number(event.target.value); if (audioRef.current) audioRef.current.currentTime = next; setProgress(next); };
-  const favoriteTracks = data.tracks.filter(track => favorites.has(track.id));
-
-  return <div className="app-shell">
-    <aside className="sidebar">
-      <a className="brand" href="#inicio" onClick={() => scrollTo('inicio')} aria-label="G4 Learning, início"><img src="/brand/g4-learning-logo-azul.svg" alt="G4 Learning"/></a>
-      <p className="nav-label">GESTÃO E ESTRATÉGIA</p>
-      <nav aria-label="Navegação principal">
-        <button className="nav-item active" onClick={() => scrollTo('inicio')}><span>01</span>Início</button>
-        <button className="nav-item" onClick={() => scrollTo('jornada')}><span>02</span>Sua jornada</button>
-        <button className="nav-item" onClick={() => scrollTo('biblioteca')}><span>03</span>Biblioteca</button>
-      </nav>
-      <div className="sidebar-section"><p>SUA BIBLIOTECA</p><button onClick={() => { setFilter('favoritos'); scrollTo('biblioteca'); }}><span>◆</span>Favoritos <b>{favorites.size}</b></button><button onClick={() => { setFilter('recentes'); scrollTo('biblioteca'); }}><span>↺</span>Recentes</button></div>
-      <div className="sidebar-foot"><i />{source}</div>
-    </aside>
-
-    <main className="content" id="inicio">
-      <header className="topbar">
-        <p>GESTÃO E ESTRATÉGIA <b>/</b> ÁUDIO</p>
-        <label className="search"><span>⌕</span><input aria-label="Buscar na biblioteca de demonstração" placeholder="Buscar na biblioteca" value={query} onChange={event => { setQuery(event.target.value); setFilter('todos'); }}/></label>
-        <a className="credits-link" href="https://github.com/candidozara/Clone-spotify/blob/main/CREDITS.md" target="_blank" rel="noreferrer">Créditos da amostra</a>
-      </header>
-
-      <section className="hero" aria-labelledby="hero-title">
-        <div className="hero-copy"><p className="eyebrow">G4 LEARNING</p><h1 id="hero-title">Conhecimento para decisões que <em>movem o negócio.</em></h1><p className="hero-text">Uma jornada de aprendizagem para líderes que querem construir com método, rigor e visão de longo prazo.</p><button className="primary-action" onClick={() => scrollTo('jornada')}>Conheça a jornada <span>→</span></button></div>
-        <div className="hero-mark" aria-hidden="true"><span>G4</span><small>GESTÃO<br/>E ESTRATÉGIA</small></div>
-      </section>
-
-      <section className="principles" aria-label="Princípios da experiência"><p><b>Direção</b><span>Estratégia antes de velocidade.</span></p><p><b>Método</b><span>Conteúdo para aplicação real.</span></p><p><b>Rigor</b><span>Decisões sustentadas por processo.</span></p></section>
-
-      <section className="journey" id="jornada" aria-labelledby="journey-title">
-        <div className="section-heading"><div><p className="eyebrow">JORNADA DE APRENDIZAGEM</p><h2 id="journey-title">Sua jornada de<br/><em>Gestão e Estratégia.</em></h2></div><p>Sete frentes para estruturar decisões, pessoas e crescimento.</p></div>
-        <div className="module-grid">{modules.map(([number, title, description]) => <article className="module-card" key={number}><span>{number}</span><h3>{title}</h3><p>{description}</p><i>EM ESTRUTURAÇÃO EDITORIAL</i></article>)}</div>
-      </section>
-
-      <section className="library" id="biblioteca" aria-labelledby="library-title">
-        <div className="section-heading"><div><p className="eyebrow">AMOSTRA TÉCNICA</p><h2 id="library-title">Biblioteca de áudio.</h2></div><p>Faixas licenciadas para validar a experiência de reprodução. Não fazem parte do conteúdo editorial G4.</p></div>
-        <div className="library-toolbar"><div className="filter-tabs" aria-label="Filtros da biblioteca"><button className={filter === 'todos' ? 'selected' : ''} onClick={() => setFilter('todos')}>Todos <b>{data.tracks.length}</b></button><button className={filter === 'favoritos' ? 'selected' : ''} onClick={() => setFilter('favoritos')}>Favoritos <b>{favorites.size}</b></button><button className={filter === 'recentes' ? 'selected' : ''} onClick={() => setFilter('recentes')}>Recentes <b>{recent.length}</b></button></div><button className="text-action" onClick={() => { setFilter('todos'); setQuery(''); }}>Limpar busca e filtros</button></div>
-        <div className="catalog-layout"><div className="track-panel"><div className="track-header"><span>CONTEÚDO</span><span>ORIGEM</span><span>AÇÃO</span></div>{tracks.length ? tracks.map(track => <article className={`track-row ${active?.id === track.id ? 'playing' : ''}`} key={track.id}><button className="track-main" onClick={() => selectTrack(track)} aria-label={`Reproduzir ${track.title}`}><img src={track.cover_path} alt=""/><span className="track-meta"><strong>{track.title}</strong><small>Áudio de demonstração</small></span></button><span className="track-origin">{track.artist}<small>Pixabay Music</small></span><div className="row-actions"><button className={favorites.has(track.id) ? 'favorite saved' : 'favorite'} onClick={() => toggleFavorite(track.id)} aria-label={favorites.has(track.id) ? `Remover ${track.title} dos favoritos` : `Adicionar ${track.title} aos favoritos`}>◆</button><button className="play-button" onClick={() => selectTrack(track)} aria-label={`Reproduzir ${track.title}`}>{active?.id === track.id && isPlaying ? 'Ⅱ' : '▶'}</button></div></article>) : <div className="empty-state"><strong>Nenhuma faixa encontrada.</strong><span>Ajuste a busca ou limpe os filtros da biblioteca.</span><button onClick={() => { setFilter('todos'); setQuery(''); }}>Ver biblioteca completa</button></div>}</div>
-          <aside className="library-note"><p className="eyebrow">SOBRE ESTA BIBLIOTECA</p><h3>Conteúdo exige contexto.</h3><p>Os áudios desta área existem para testar a experiência técnica de player. Os créditos e licenças permanecem disponíveis no repositório.</p><a href="https://github.com/candidozara/Clone-spotify/blob/main/CREDITS.md" target="_blank" rel="noreferrer">Consultar créditos <span>→</span></a>{favoriteTracks.length > 0 && <div className="favorite-summary"><span>SELECIONADAS</span><strong>{favoriteTracks.length} {favoriteTracks.length === 1 ? 'faixa salva' : 'faixas salvas'}</strong></div>}</aside>
-        </div>
-      </section>
-      <footer><img src="/brand/g4-learning-logo-azul.svg" alt="G4 Learning"/><p>Gestão e Estratégia em áudio. Estrutura de experiência em evolução.</p><a href="https://github.com/candidozara/Clone-spotify" target="_blank" rel="noreferrer">Ver projeto</a></footer>
-    </main>
-
-    <nav className="mobile-nav" aria-label="Navegação móvel"><button onClick={() => scrollTo('inicio')}><span>01</span>Início</button><button onClick={() => scrollTo('jornada')}><span>02</span>Jornada</button><button onClick={() => scrollTo('biblioteca')}><span>03</span>Biblioteca</button></nav>
-    {active && <section className="player" aria-label="Reprodutor atual"><img className="now-art" src={active.cover_path} alt=""/><div className="now-meta"><strong>{active.title}</strong><span>Áudio de demonstração · {active.artist}</span></div><div className="player-center"><div className="player-controls"><button onClick={() => playAdjacent(-1)} aria-label="Faixa anterior">‹</button><button onClick={() => jump(-15)} aria-label="Voltar 15 segundos">−15</button><button className="pause-play" onClick={togglePlayback} aria-label={isPlaying ? 'Pausar' : 'Reproduzir'}>{isPlaying ? 'Ⅱ' : '▶'}</button><button onClick={() => jump(15)} aria-label="Avançar 15 segundos">+15</button><button onClick={() => playAdjacent(1)} aria-label="Próxima faixa">›</button></div><div className="timeline"><span>{fmt(progress)}</span><input aria-label="Progresso da faixa" type="range" min="0" max={duration || 1} value={Math.min(progress, duration || 1)} onChange={seek}/><span>{fmt(duration)}</span></div></div><button className="close-player" onClick={() => { audioRef.current?.pause(); setActive(null); setIsPlaying(false); }} aria-label="Fechar player">×</button><audio ref={audioRef} autoPlay src={active.audio_path} onPlay={() => setIsPlaying(true)} onPause={() => setIsPlaying(false)} onLoadedMetadata={event => setDuration(event.currentTarget.duration)} onTimeUpdate={event => setProgress(event.currentTarget.currentTime)} onEnded={() => playAdjacent(1)}>Seu navegador não suporta reprodução de áudio.</audio></section>}
-  </div>;
-}
-createRoot(document.getElementById('root')).render(<App/>);
+import React,{useEffect,useMemo,useState}from'react';import{createRoot}from'react-dom/client';import'./styles.css';
+const API=import.meta.env.VITE_API_BASE_URL||'http://127.0.0.1:8787';
+const fallback=[
+[1,'Legado','Governança: como preparar a empresa para crescer além do fundador','Estruture as bases de decisão, responsabilidades e gestão para que a empresa cresça com mais clareza e continuidade.','Quando a empresa cresce, decisões informais e dependência de poucas pessoas podem se tornar limites. Explore quando estruturar a governança, como pensar acordos de acionistas, definir alçadas entre sócios e administração e usar o sistema de gestão como base para o crescimento.','Quais decisões ainda dependem de acordos informais ou da intervenção direta do fundador?',['Governança','Sistema de gestão','Sociedade','Alçadas','Acordo de acionistas','Legado']],
+[2,'Estratégia e Gestão','Do mercado às metas: transforme ambição em estratégia','Conecte oportunidades de mercado, posicionamento e objetivos a escolhas e indicadores concretos.','Uma estratégia útil parte da leitura do mercado e do posicionamento real da empresa. Explore como analisar concorrentes, reconhecer o potencial de mercado, construir uma visão de longo prazo e transformar ambições em ações com metas e indicadores claros.','Qual oportunidade relevante a empresa ainda não transformou em uma escolha estratégica explícita?',['Estratégia','Mercado','Concorrência','Posicionamento','Metas','Indicadores']],
+[3,'Comando','O próximo estágio da empresa começa com o papel do fundador','Reavalie como tempo, energia e capital do fundador influenciam a próxima fase do negócio.','O papel do fundador muda conforme a empresa evolui. Este conteúdo aborda decisões que continuam sendo responsabilidade do fundador, transições de papel, alocação de recursos, construção de cultura e desenvolvimento de lideranças.','O que ainda depende de você que deveria estar sendo desenvolvido como capacidade da organização?',['Fundador','Liderança','Cultura','C-level','IA','Perenidade']],
+[4,'Comando','Cultura que acelera a estratégia — e aparece nas decisões diárias','Entenda como missão, metas, comportamentos e rituais se conectam à execução.','Cultura não é apenas discurso: ela se revela nos comportamentos que a empresa incentiva, tolera e repete. Explore como conectar missão e metas a práticas concretas, usando símbolos e rituais organizacionais para sustentar a estratégia.','Que comportamento a empresa diz valorizar, mas ainda não reforça de forma consistente?',['Cultura','Liderança','Comportamentos','Rituais','Missão','Execução']],
+[5,'Estratégia e Gestão / Escala','Como construir um motor de vendas que não dependa do fundador','Conecte modelo de crescimento, recursos comerciais, marketing e experiência do cliente para ampliar receita.','O crescimento comercial exige mais do que esforço individual. Explore como construir um motor de vendas menos dependente do fundador, escolher o modelo de crescimento adequado e integrar vendas, marketing, marca, experiência do cliente e comunidade.','Qual etapa do seu motor comercial ainda depende de esforço manual ou da presença do fundador?',['Vendas','Receita','Marketing','Branding','CX','Comunidade','IA']],
+[6,'Escala','Crescer com margem: encontre o próximo gargalo do negócio','Identifique gargalos, oportunidades e alocação de recursos para crescer com margem e previsibilidade.','Crescimento sustentável exige entender em que fase a empresa está, onde estão os gargalos e quais oportunidades fazem sentido para o mercado e para a estratégia. Explore vantagem competitiva, alocação de recursos e aplicações de IA para apoiar o crescimento.','O que hoje limita o crescimento: mercado, processo, pessoas, capacidade de execução ou alocação de recursos?',['Growth','Crescimento','Gargalos','Margem','Escala','Previsibilidade','Automação','IA']],
+[7,'Aliança','IA na alta gestão: mais capacidade de análise, melhores decisões','Explore como a inteligência artificial pode apoiar decisões críticas, gestão e inovação com responsabilidade.','A IA passa a fazer parte das conversas estratégicas de empresas e conselhos. Este conteúdo aborda seu papel na alta gestão, a ampliação da capacidade de análise, a aceleração de decisões e os cuidados com ética, confiança e governança.','Qual decisão ou processo poderia ganhar qualidade com IA — e quais controles seriam necessários para usá-la com confiança?',['Inteligência Artificial','Alta gestão','Board','Decisão','Ética','Governança','Inovação']]
+].map(([module_number,pillar,title,short_description,long_description,application_question,tags])=>({id:module_number,module_number,pillar,title,short_description,long_description,application_question,tags_json:JSON.stringify(tags),availability:'coming_soon'}));
+const scroll=id=>document.getElementById(id)?.scrollIntoView({behavior:'smooth'});
+function App(){const[modules,setModules]=useState(fallback),[query,setQuery]=useState(''),[pillar,setPillar]=useState('Todos'),[favorites,setFavorites]=useState(()=>new Set(JSON.parse(localStorage.getItem('g4-module-favorites')||'[]'))),[selected,setSelected]=useState(null),[last,setLast]=useState(()=>localStorage.getItem('g4-last-module')||''),[status,setStatus]=useState('ready');
+useEffect(()=>{fetch(`${API}/api/catalog`).then(r=>r.ok?r.json():Promise.reject()).then(d=>{if(d.modules?.length)setModules(d.modules)}).catch(()=>setStatus('offline'))},[]);useEffect(()=>localStorage.setItem('g4-module-favorites',JSON.stringify([...favorites])),[favorites]);
+const tags=m=>{try{return JSON.parse(m.tags_json)}catch{return[]}};const pillars=['Todos',...new Set(modules.map(m=>m.pillar))];const list=useMemo(()=>modules.filter(m=>{const text=[m.title,m.short_description,m.pillar,...tags(m)].join(' ').toLowerCase();return(pillar==='Todos'||m.pillar===pillar)&&(text.includes(query.toLowerCase()))}),[modules,pillar,query]);
+const open=m=>{setSelected(m);setLast(String(m.id));localStorage.setItem('g4-last-module',String(m.id));window.scrollTo({top:0,behavior:'smooth'})};const toggle=id=>setFavorites(x=>{const n=new Set(x);n.has(id)?n.delete(id):n.add(id);return n});const lastModule=modules.find(m=>String(m.id)===last);const fav=modules.filter(m=>favorites.has(m.id));
+if(selected)return <div className="app-shell"><Sidebar favoriteCount={favorites.size} onNav={id=>{setSelected(null);setTimeout(()=>scroll(id),0)}} onFav={()=>{setSelected(null);setPillar('Favoritos')}}/><main className="content detail"><header className="topbar"><button className="back" onClick={()=>setSelected(null)}>← Voltar à jornada</button><label className="search"><span>⌕</span><input placeholder="Buscar conteúdo" value={query} onChange={e=>setQuery(e.target.value)}/></label></header><p className="eyebrow">MÓDULO {String(selected.module_number).padStart(2,'0')} · {selected.pillar.toUpperCase()}</p><h1>{selected.title}</h1><p className="lead">{selected.long_description}</p><section className="detail-grid"><article><p className="eyebrow">TEMAS</p><div className="tags">{tags(selected).map(t=><span key={t}>{t}</span>)}</div></article><article className="question"><p className="eyebrow">PERGUNTA PARA APLICAÇÃO</p><p>{selected.application_question}</p></article></section><section className="empty-content"><p className="eyebrow">CONTEÚDO EM PREPARAÇÃO</p><h2>Novos conteúdos em preparação.</h2><p>Este módulo será atualizado com áudios de Gestão e Estratégia depois da validação editorial e da publicação dos arquivos autorizados.</p></section></main></div>;
+return <div className="app-shell"><Sidebar favoriteCount={favorites.size} onNav={scroll} onFav={()=>{setPillar('Favoritos');scroll('biblioteca')}}/><main className="content" id="inicio"><header className="topbar"><p>GESTÃO E ESTRATÉGIA <b>/</b> ÁUDIO</p><label className="search"><span>⌕</span><input aria-label="Buscar módulos e temas" placeholder="Busque por tema, desafio ou módulo" value={query} onChange={e=>{setQuery(e.target.value);setPillar('Todos')}}/></label></header><section className="hero"><div><p className="eyebrow">G4 LEARNING</p><h1>Seu próximo insight começa <em>aqui.</em></h1><p>Conhecimento de gestão para decisões melhores — em áudio, com aplicação prática no negócio.</p><button onClick={()=>scroll('jornada')}>Explore a jornada <span>→</span></button></div><div className="hero-mark">G4<small>GESTÃO<br/>E ESTRATÉGIA</small></div></section>{lastModule?<section className="continue"><p className="eyebrow">CONTINUAR EXPLORANDO</p><div><div><span>MÓDULO {String(lastModule.module_number).padStart(2,'0')}</span><h2>{lastModule.title}</h2><p>{lastModule.short_description}</p></div><button onClick={()=>open(lastModule)}>Retomar módulo →</button></div></section>:<section className="empty-history"><p className="eyebrow">SUA JORNADA</p><h2>Comece pelo desafio que mais importa agora.</h2><p>Explore os módulos de Gestão e Estratégia e escolha o tema mais conectado ao momento da sua empresa.</p></section>}<section className="journey" id="jornada"><div className="section-heading"><div><p className="eyebrow">TRILHA PRINCIPAL</p><h2>G4 Gestão e Estratégia.</h2></div><p>Sete módulos para explorar governança, estratégia, cultura, vendas, growth e inteligência artificial aplicada à gestão.</p></div><div className="module-grid">{modules.map(m=><Module key={m.id} m={m} onOpen={open} saved={favorites.has(m.id)} onSave={toggle}/>)}</div></section><section className="library" id="biblioteca"><div className="section-heading"><div><p className="eyebrow">BIBLIOTECA DE CONHECIMENTO</p><h2>Encontre seu próximo tema.</h2></div><p>Conteúdos são exibidos somente quando publicados e validados.</p></div><div className="filters">{pillars.map(p=><button key={p} className={pillar===p?'selected':''} onClick={()=>setPillar(p)}>{p}</button>)}<button className={pillar==='Favoritos'?'selected':''} onClick={()=>setPillar('Favoritos')}>Salvos ({favorites.size})</button></div><div className="results">{pillar==='Favoritos'?fav.filter(m=>[m.title,m.short_description,...tags(m)].join(' ').toLowerCase().includes(query.toLowerCase())).map(m=><Module key={m.id} m={m} onOpen={open} saved onSave={toggle}/>):list.map(m=><Module key={m.id} m={m} onOpen={open} saved={favorites.has(m.id)} onSave={toggle}/>)}{((pillar==='Favoritos'?fav:list).length===0)&&<div className="empty-content"><p className="eyebrow">{status==='offline'?'CATÁLOGO INDISPONÍVEL':'NENHUM CONTEÚDO ENCONTRADO'}</p><h2>{status==='offline'?'O catálogo está sendo preparado.':'Não encontramos esse conteúdo.'}</h2><p>{status==='offline'?'Tente novamente em instantes.':'Tente buscar por um tema de gestão, um módulo ou o nome de um mentor.'}</p></div>}</div></section><footer><img src="/brand/g4-learning-logo-azul.svg" alt="G4 Learning"/><p>Gestão e Estratégia em áudio.</p></footer></main></div>}
+function Sidebar({favoriteCount,onNav,onFav}){return <aside className="sidebar"><button className="brand" onClick={()=>onNav('inicio')}><img src="/brand/g4-learning-logo-azul.svg" alt="G4 Learning"/></button><p className="nav-label">GESTÃO E ESTRATÉGIA</p><nav><button className="nav-item" onClick={()=>onNav('inicio')}><span>01</span>Início</button><button className="nav-item" onClick={()=>onNav('jornada')}><span>02</span>Sua jornada</button><button className="nav-item" onClick={()=>onNav('biblioteca')}><span>03</span>Biblioteca</button></nav><div className="sidebar-section"><p>SUA BIBLIOTECA</p><button onClick={onFav}><span>◆</span>Salvos <b>{favoriteCount}</b></button></div></aside>};function Module({m,onOpen,saved,onSave}){return <article className="module-card"><span>{String(m.module_number).padStart(2,'0')} · {m.pillar}</span><h3>{m.title}</h3><p>{m.short_description}</p><div><button className="module-open" onClick={()=>onOpen(m)}>Ver módulo →</button><button className={saved?'save saved':'save'} onClick={()=>onSave(m.id)} aria-label="Salvar módulo">◆</button></div></article>};createRoot(document.getElementById('root')).render(<App/>);
