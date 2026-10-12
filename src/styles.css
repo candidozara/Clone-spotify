@@ -31,3 +31,18 @@
 .player-panel{z-index:40;overflow-y:auto}
 .player-screen{z-index:50;overflow-y:auto}
 @media(max-width:780px){:root{--player-space:132px}.content{padding-bottom:calc(var(--player-space) + 64px)}.artist-showcase{margin-bottom:58px}.portrait-slot{flex-basis:142px;height:142px;min-height:142px}.artist-card-copy{min-height:98px;padding:12px}.artist-card-copy strong{font-size:12px}.artist-card-copy>span{font-size:10px}.player{z-index:30}.player-panel{z-index:40}.player-screen{z-index:50}}
+
+/* One player surface at a time: mini, side panel, or full screen. */
+.artist-gallery{grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px}
+.artist-card{min-height:0;overflow:hidden;border-radius:14px;contain:layout paint}
+.portrait-slot{aspect-ratio:1/1;flex:0 0 auto;height:auto;min-height:0}
+.portrait-slot:before{display:none}
+.portrait-slot:after{left:14px;right:14px;bottom:12px}
+.artist-card-copy{min-height:104px;padding:14px 15px}
+.artist-card-copy strong{font-size:14px;line-height:1.3}
+.artist-card-copy>span{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;min-height:29px}
+.player-panel{display:flex;flex-direction:column}
+.player-panel>img{flex:0 0 auto}
+.player-panel h2{overflow-wrap:anywhere}
+.player-screen{display:flex}
+@media(max-width:780px){.artist-gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.artist-card-copy{min-height:96px}.portrait-slot{aspect-ratio:1/1}.player-panel{z-index:60}.player-screen{z-index:70}}
