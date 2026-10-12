@@ -14,3 +14,20 @@
 
 /* Featured carousel: timed rotation, desktop arrows and mobile swipe. */
 .hero-arrow{position:absolute;z-index:3;top:50%;width:36px;height:36px;margin-top:-18px;border:1px solid #ffffff4d;border-radius:50%;background:#07131ca8;color:#f5f4f3;font-size:28px;line-height:28px;cursor:pointer;transition:background .2s,transform .2s}.hero-arrow:hover{background:#b9915b;color:#011422;transform:scale(1.08)}.hero-prev{left:18px}.hero-next{right:18px}.hero-card{touch-action:pan-y}@media(max-width:780px){.hero-arrow{display:none}}
+
+/* Keep mentor content structurally isolated from the persistent player. */
+:root{--player-space:112px}
+.content{padding-bottom:calc(var(--player-space) + 80px)}
+.artist-showcase{position:relative;z-index:1;isolation:isolate;clear:both}
+.artist-gallery{align-items:stretch}
+.artist-card{position:relative;display:flex;min-width:0;flex-direction:column;isolation:isolate;overflow:hidden}
+.portrait-slot{position:relative;display:block;flex:0 0 184px;height:184px;min-height:184px;overflow:hidden;background:#123044}
+.portrait-slot>img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;object-fit:cover!important;object-position:center!important;transform:none!important}
+.portrait-slot:before,.portrait-slot:after{pointer-events:none;z-index:1}
+.artist-card-copy{position:relative;z-index:2;min-height:88px;background:#151f28}
+.artist-card-copy strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.artist-card-copy>span{display:block;min-height:28px;line-height:1.4}
+.player{z-index:30}
+.player-panel{z-index:40;overflow-y:auto}
+.player-screen{z-index:50;overflow-y:auto}
+@media(max-width:780px){:root{--player-space:132px}.content{padding-bottom:calc(var(--player-space) + 64px)}.artist-showcase{margin-bottom:58px}.portrait-slot{flex-basis:142px;height:142px;min-height:142px}.artist-card-copy{min-height:98px;padding:12px}.artist-card-copy strong{font-size:12px}.artist-card-copy>span{font-size:10px}.player{z-index:30}.player-panel{z-index:40}.player-screen{z-index:50}}
