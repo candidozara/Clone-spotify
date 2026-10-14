@@ -58,3 +58,10 @@
 .timeline input,.player-panel input,.player-screen input{touch-action:none;cursor:pointer}
 .timeline input::-webkit-slider-thumb,.player-panel input::-webkit-slider-thumb,.player-screen input::-webkit-slider-thumb{width:14px;height:14px;border:0;border-radius:50%;background:#b9915b;cursor:grab}
 .timeline input:active::-webkit-slider-thumb,.player-panel input:active::-webkit-slider-thumb,.player-screen input:active::-webkit-slider-thumb{cursor:grabbing}
+
+/* Large native seek target: click anywhere and drag the thumb precisely. */
+.timeline input,.player-panel input,.player-screen input{-webkit-appearance:none;appearance:none;height:30px;padding:0;background:transparent;border:0;outline:none}
+.timeline input::-webkit-slider-runnable-track,.player-panel input::-webkit-slider-runnable-track,.player-screen input::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:linear-gradient(90deg,#b9915b 0 var(--seek-progress,0%),#29404b var(--seek-progress,0%) 100%)}
+.timeline input::-webkit-slider-thumb,.player-panel input::-webkit-slider-thumb,.player-screen input::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;margin-top:-6px;border:3px solid #f5f4f3;border-radius:50%;background:#b9915b;box-shadow:0 1px 5px #0008}
+.timeline input::-moz-range-track,.player-panel input::-moz-range-track,.player-screen input::-moz-range-track{height:6px;border-radius:99px;background:#29404b}.timeline input::-moz-range-progress,.player-panel input::-moz-range-progress,.player-screen input::-moz-range-progress{height:6px;border-radius:99px;background:#b9915b}.timeline input::-moz-range-thumb,.player-panel input::-moz-range-thumb,.player-screen input::-moz-range-thumb{width:14px;height:14px;border:3px solid #f5f4f3;border-radius:50%;background:#b9915b}
+@media(max-width:780px){.timeline input,.player-panel input,.player-screen input{height:38px}.timeline input::-webkit-slider-thumb,.player-panel input::-webkit-slider-thumb,.player-screen input::-webkit-slider-thumb{width:22px;height:22px;margin-top:-8px}}
